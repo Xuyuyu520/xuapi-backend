@@ -2,18 +2,19 @@ package com.yupi.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.Gson;
+import com.xyc.xuapiclientsdk.client.XuApiClient;
 import com.yupi.project.annotation.AuthCheck;
-import com.yupi.project.common.BaseResponse;
-import com.yupi.project.common.DeleteRequest;
-import com.yupi.project.common.ErrorCode;
-import com.yupi.project.common.ResultUtils;
+import com.yupi.project.common.*;
 import com.yupi.project.constant.CommonConstant;
 import com.yupi.project.exception.BusinessException;
 import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.yupi.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.yupi.project.model.entity.InterfaceInfo;
 import com.yupi.project.model.entity.User;
+import com.yupi.project.model.enums.InterfaceInfoStatusEnum;
 import com.yupi.project.service.InterfaceInfoService;
 import com.yupi.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,8 @@ public class InterfaceInfoController {
 	@Resource
 	private UserService userService;
 
+	@Resource
+	private XuApiClient xuApiClient;
 	// region 增删改查
 
 	/**
@@ -195,5 +198,106 @@ public class InterfaceInfoController {
 	}
 
 	// endregion
+
+	/**
+	 * 上线
+	 *
+	 * @param idRequest
+	 * @param request
+	 * @return
+	 */
+	@AuthCheck(mustRole = "admin")
+	@PostMapping("/online")
+	public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest,
+	                                                 HttpServletRequest request) {
+		// 判断是否为空
+		if (idRequest == null || idRequest.getId() <= 0) {
+			throw new BusinessException(ErrorCode.PARAMS_ERROR);
+		}
+		// 判断接口是否存在
+		long id = idRequest.getId();
+		InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+		if (oldInterfaceInfo == null) {
+			throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+		}
+		// 判断接口是否可以调用
+		com.xyc.xuapiclientsdk.model.User user = new com.xyc.xuapiclientsdk.model.User();
+		user.setUsername("test");
+		String username = xuApiClient.getUsernameByPost(user);
+		if (StringUtils.isBlank(username)) {
+			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
+		}
+
+		// 仅本人或管理员可修改
+		InterfaceInfo interfaceInfo = new InterfaceInfo();
+		interfaceInfo.setUserId(id);
+		interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
+		boolean result = interfaceInfoService.updateById(interfaceInfo);
+		return ResultUtils.success(result);
+	}
+
+	/**
+	 * 下线
+	 *
+	 * @param idRequest
+	 * @param request
+	 * @return
+	 */
+	@AuthCheck(mustRole = "admin")
+	@PostMapping("/offline")
+	public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest,
+	                                                  HttpServletRequest request) {
+		// 判断是否为空
+		if (idRequest == null || idRequest.getId() <= 0) {
+			throw new BusinessException(ErrorCode.PARAMS_ERROR);
+		}
+		// 判断接口是否存在
+		long id = idRequest.getId();
+		InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+		if (oldInterfaceInfo == null) {
+			throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+		}
+
+		// 仅本人或管理员可修改
+		InterfaceInfo interfaceInfo = new InterfaceInfo();
+		interfaceInfo.setUserId(id);
+		interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
+		boolean result = interfaceInfoService.updateById(interfaceInfo);
+		return ResultUtils.success(result);
+	}
+
+	/**
+	 *
+	 * @param idRequest
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/invoke")
+	public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
+	                                                HttpServletRequest request) {
+		// 判断是否为空
+		if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
+			throw new BusinessException(ErrorCode.PARAMS_ERROR);
+		}
+		// 判断接口是否存在
+		long id = interfaceInfoInvokeRequest.getId();
+		String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+		InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+		if (oldInterfaceInfo == null) {
+			throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+		}
+		if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()) {
+			throw new BusinessException(ErrorCode.PARAMS_ERROR,"接口状态未启用");
+		}
+		// 仅本人或管理员可修改
+		User loginUser = userService.getLoginUser(request);
+		String accessKey = loginUser.getAccessKey();
+		String secretKey = loginUser.getSecretKey();
+		XuApiClient tempClient = new XuApiClient(accessKey, secretKey);
+		Gson gson = new Gson();
+		com.xyc.xuapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.xyc.xuapiclientsdk.model.User.class);
+		String usernameByPost = tempClient.getUsernameByPost(user);
+		return ResultUtils.success(usernameByPost);
+	}
 
 }

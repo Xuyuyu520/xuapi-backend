@@ -6,13 +6,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="xuapi-client-sdk" />
         <module name="xuapi-backend" />
+        <module name="yuapi-interface" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="xuapi-backend" options="-parameters" />
+      <module name="xuapi-client-sdk" options="-parameters" />
+      <module name="yuapi-interface" options="-parameters" />
     </option>
   </component>
 </project>

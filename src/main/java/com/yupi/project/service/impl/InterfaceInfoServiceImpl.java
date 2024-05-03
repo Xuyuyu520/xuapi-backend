@@ -57,7 +57,7 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
 		}
 
 		// 校验URL格式
-		if (StringUtils.isNotBlank(url) && !url.matches("^https?://.*")) {
+		if (StringUtils.isNotBlank(url) && !url.matches("^http?://.*")) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "URL格式不正确");
 		}
 
