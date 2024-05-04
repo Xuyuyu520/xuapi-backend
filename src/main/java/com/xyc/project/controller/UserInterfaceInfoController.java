@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.xyc.project.annotation.AuthCheck;
 import com.xyc.project.common.*;
 import com.xyc.project.constant.CommonConstant;
+import com.xyc.project.constant.UserConstant;
 import com.xyc.project.exception.BusinessException;
 import com.xyc.project.model.dto.userinterfaceinfo.UserInterfaceInfoAddRequest;
 import com.xyc.project.model.dto.userinterfaceinfo.UserInterfaceInfoInvokeRequest;
@@ -27,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * 帖子接口
+ * 接口管理
  *
  * @author yupi
  */
@@ -42,8 +43,6 @@ public class UserInterfaceInfoController {
 	@Resource
 	private UserService userService;
 
-	@Resource
-	private XuApiClient xuApiClient;
 	// region 增删改查
 
 	/**
@@ -54,6 +53,7 @@ public class UserInterfaceInfoController {
 	 * @return
 	 */
 	@PostMapping("/add")
+	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
 	public BaseResponse<Long> addUserInterfaceInfo(@RequestBody UserInterfaceInfoAddRequest userInterfaceInfoAddRequest, HttpServletRequest request) {
 		if (userInterfaceInfoAddRequest == null) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -80,6 +80,7 @@ public class UserInterfaceInfoController {
 	 * @return
 	 */
 	@PostMapping("/delete")
+	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
 	public BaseResponse<Boolean> deleteUserInterfaceInfo(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
 		if (deleteRequest == null || deleteRequest.getId() <= 0) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -107,8 +108,9 @@ public class UserInterfaceInfoController {
 	 * @return
 	 */
 	@PostMapping("/update")
+	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
 	public BaseResponse<Boolean> updateUserInterfaceInfo(@RequestBody UserInterfaceInfoUpdateRequest userInterfaceInfoUpdateRequest,
-	                                                 HttpServletRequest request) {
+	                                                     HttpServletRequest request) {
 		if (userInterfaceInfoUpdateRequest == null || userInterfaceInfoUpdateRequest.getId() <= 0) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
 		}
@@ -138,6 +140,7 @@ public class UserInterfaceInfoController {
 	 * @return
 	 */
 	@GetMapping("/get")
+	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
 	public BaseResponse<UserInterfaceInfo> getUserInterfaceInfoById(long id) {
 		if (id <= 0) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -172,6 +175,8 @@ public class UserInterfaceInfoController {
 	 * @return
 	 */
 	@GetMapping("/list/page")
+	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+
 	public BaseResponse<Page<UserInterfaceInfo>> listUserInterfaceInfoByPage(UserInterfaceInfoQueryRequest userInterfaceInfoQueryRequest, HttpServletRequest request) {
 		if (userInterfaceInfoQueryRequest == null) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -199,105 +204,5 @@ public class UserInterfaceInfoController {
 
 	// endregion
 
-	/**
-	 * 上线
-	 *
-	 * @param idRequest
-	 * @param request
-	 * @return
-	 */
-	@AuthCheck(mustRole = "admin")
-	@PostMapping("/online")
-	public BaseResponse<Boolean> onlineUserInterfaceInfo(@RequestBody IdRequest idRequest,
-	                                                 HttpServletRequest request) {
-		// 判断是否为空
-		if (idRequest == null || idRequest.getId() <= 0) {
-			throw new BusinessException(ErrorCode.PARAMS_ERROR);
-		}
-		// 判断接口是否存在
-		long id = idRequest.getId();
-		UserInterfaceInfo oldUserInterfaceInfo = userInterfaceInfoService.getById(id);
-		if (oldUserInterfaceInfo == null) {
-			throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-		}
-		// 判断接口是否可以调用
-		com.xyc.xuapiclientsdk.model.User user = new com.xyc.xuapiclientsdk.model.User();
-		user.setUsername("test");
-		String username = xuApiClient.getUsernameByPost(user);
-		if (StringUtils.isBlank(username)) {
-			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
-		}
-
-		// 仅本人或管理员可修改
-		UserInterfaceInfo userInterfaceInfo = new UserInterfaceInfo();
-		userInterfaceInfo.setUserId(id);
-		userInterfaceInfo.setStatus(UserInterfaceInfoStatusEnum.ONLINE.getValue());
-		boolean result = userInterfaceInfoService.updateById(userInterfaceInfo);
-		return ResultUtils.success(result);
-	}
-
-	/**
-	 * 下线
-	 *
-	 * @param idRequest
-	 * @param request
-	 * @return
-	 */
-	@AuthCheck(mustRole = "admin")
-	@PostMapping("/offline")
-	public BaseResponse<Boolean> offlineUserInterfaceInfo(@RequestBody IdRequest idRequest,
-	                                                  HttpServletRequest request) {
-		// 判断是否为空
-		if (idRequest == null || idRequest.getId() <= 0) {
-			throw new BusinessException(ErrorCode.PARAMS_ERROR);
-		}
-		// 判断接口是否存在
-		long id = idRequest.getId();
-		UserInterfaceInfo oldUserInterfaceInfo = userInterfaceInfoService.getById(id);
-		if (oldUserInterfaceInfo == null) {
-			throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-		}
-
-		// 仅本人或管理员可修改
-		UserInterfaceInfo userInterfaceInfo = new UserInterfaceInfo();
-		userInterfaceInfo.setUserId(id);
-		userInterfaceInfo.setStatus(UserInterfaceInfoStatusEnum.OFFLINE.getValue());
-		boolean result = userInterfaceInfoService.updateById(userInterfaceInfo);
-		return ResultUtils.success(result);
-	}
-
-	/**
-	 *
-	 * @param userInterfaceInfoInvokeRequest
-	 * @param request
-	 * @return
-	 */
-	@PostMapping("/invoke")
-	public BaseResponse<Object> invokeUserInterfaceInfo(@RequestBody UserInterfaceInfoInvokeRequest userInterfaceInfoInvokeRequest,
-	                                                HttpServletRequest request) {
-		// 判断是否为空
-		if (userInterfaceInfoInvokeRequest == null || userInterfaceInfoInvokeRequest.getId() <= 0) {
-			throw new BusinessException(ErrorCode.PARAMS_ERROR);
-		}
-		// 判断接口是否存在
-		long id = userInterfaceInfoInvokeRequest.getId();
-		String userRequestParams = userInterfaceInfoInvokeRequest.getUserRequestParams();
-		UserInterfaceInfo oldUserInterfaceInfo = userInterfaceInfoService.getById(id);
-		if (oldUserInterfaceInfo == null) {
-			throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-		}
-		if (oldUserInterfaceInfo.getStatus() == UserInterfaceInfoStatusEnum.OFFLINE.getValue()) {
-			throw new BusinessException(ErrorCode.PARAMS_ERROR,"接口状态未启用");
-		}
-		// 仅本人或管理员可修改
-		User loginUser = userService.getLoginUser(request);
-		String accessKey = loginUser.getAccessKey();
-		String secretKey = loginUser.getSecretKey();
-		XuApiClient tempClient = new XuApiClient(accessKey, secretKey);
-		Gson gson = new Gson();
-		com.xyc.xuapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.xyc.xuapiclientsdk.model.User.class);
-		String usernameByPost = tempClient.getUsernameByPost(user);
-		return ResultUtils.success(usernameByPost);
-	}
 
 }

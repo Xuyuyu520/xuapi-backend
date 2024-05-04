@@ -12,41 +12,33 @@ import java.io.Serializable;
 @Data
 public class UserInterfaceInfoAddRequest implements Serializable {
 
-    /**
-     * 名称
-     */
-    private String name;
 
     /**
-     * 描述
+     * 调用用户 id
      */
-    private String description;
+    private Long userId;
 
     /**
-     * 接口地址
+     * 接口 id
      */
-    private String url;
+    private Long interfaceInfoId;
 
     /**
-     * 请求参数
+     * 总调用次数
      */
-    private String requestParams;
+    private Integer totalNum;
 
     /**
-     * 请求头
+     * 剩余调用次数
      */
-    private String requestHeader;
+    private Integer leftNum;
 
     /**
-     * 响应头
+     * 0-正常，1-禁用
      */
-    private String responseHeader;
+    private Integer status;
 
 
-    /**
-     * 请求类型
-     */
-    private String method;
 
 
     private static final long serialVersionUID = -1923156698109551334L;

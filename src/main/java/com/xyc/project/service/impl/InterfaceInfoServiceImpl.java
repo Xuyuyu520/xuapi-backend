@@ -55,16 +55,6 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "URL格式不正确");
 		}
 
-		// 校验请求参数格式
-		// 这里假设请求参数是 JSON 格式，你可以根据实际情况修改校验逻辑
-		if (StringUtils.isNotBlank(requestParams)) {
-			try {
-				// 尝试解析请求参数为 JSON 对象，如果失败则抛出异常
-				new JSONObject(requestParams);
-			} catch (JSONException e) {
-				throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数格式不正确");
-			}
-		}
 
 		// 校验请求头格式
 		// 同样，这里假设请求头是 JSON 格式，你可以根据实际情况修改校验逻辑

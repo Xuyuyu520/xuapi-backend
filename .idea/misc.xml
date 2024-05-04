@@ -7,6 +7,7 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/xuapi-client-sdk/pom.xml" />
         <option value="$PROJECT_DIR$/xuapi-interface/pom.xml" />
+        <option value="$PROJECT_DIR$/xuapi-gateway/pom.xml" />
       </list>
     </option>
   </component>

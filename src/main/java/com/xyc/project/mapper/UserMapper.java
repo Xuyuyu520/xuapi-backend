@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xyc.project.model.entity.User;
 
 /**
- * @Entity com.yupi.project.model.User
+ * @Entity com.xyc.project.model.User
  */
 public interface UserMapper extends BaseMapper<User> {
 
