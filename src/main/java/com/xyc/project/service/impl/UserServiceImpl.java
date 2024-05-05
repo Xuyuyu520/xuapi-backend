@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xyc.project.common.ErrorCode;
 import com.xyc.project.exception.BusinessException;
 import com.xyc.project.mapper.UserMapper;
-import com.xyc.project.model.entity.User;
 import com.xyc.project.service.UserService;
+import com.xyc.xuapicommon.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -26,8 +26,7 @@ import static com.xyc.project.constant.UserConstant.USER_LOGIN_STATE;
  */
 @Service
 @Slf4j
-public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-		implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
 	@Resource
 	private UserMapper userMapper;

@@ -3,9 +3,9 @@ package com.xyc.project.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xyc.project.common.ErrorCode;
 import com.xyc.project.exception.BusinessException;
-import com.xyc.project.model.entity.InterfaceInfo;
 import com.xyc.project.service.InterfaceInfoService;
 import com.xyc.project.mapper.InterfaceInfoMapper;
+import com.xyc.xuapicommon.model.entity.InterfaceInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -17,8 +17,7 @@ import org.springframework.stereotype.Service;
  * @createDate 2024-05-02 13:54:22
  */
 @Service
-public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
-		implements InterfaceInfoService {
+public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo> implements InterfaceInfoService {
 
 	/**
 	 * 有效接口信息 校验

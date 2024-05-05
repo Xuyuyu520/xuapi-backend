@@ -23,6 +23,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.xyc</groupId>
+            <artifactId>xuapi-common</artifactId>
+            <version>0.0.1</version>
+        </dependency>
         <dependency>
             <groupId>com.xuapi</groupId>
             <artifactId>xuapi-client-sdk</artifactId>

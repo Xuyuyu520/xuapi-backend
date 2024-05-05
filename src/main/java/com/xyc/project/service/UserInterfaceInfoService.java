@@ -1,7 +1,7 @@
 package com.xyc.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xyc.project.model.entity.UserInterfaceInfo;
+import com.xyc.xuapicommon.model.entity.UserInterfaceInfo;
 
 /**
 * @author xuyucheng
