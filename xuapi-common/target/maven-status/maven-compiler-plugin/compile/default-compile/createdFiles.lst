@@ -1,12 +1,13 @@
 com\xyc\xuapicommon\model\enums\PostGenderEnum.class
-com\xyc\xuapicommon\model\vo\UserVO.class
 com\xyc\xuapicommon\model\entity\User.class
 com\xyc\xuapicommon\model\enums\InterfaceInfoStatusEnum.class
-com\xyc\xuapicommon\model\enums\PostReviewStatusEnum.class
-com\xyc\xuapicommon\service\InnerInterfaceInfoService.class
 com\xyc\xuapicommon\service\InnerUserInterfaceInfoService.class
 com\xyc\xuapicommon\service\InnerUserService.class
 com\xyc\xuapicommon\model\entity\Post.class
 com\xyc\xuapicommon\model\entity\UserInterfaceInfo.class
 com\xyc\xuapicommon\model\vo\PostVO.class
+com\xyc\xuapicommon\utils\SignUtils.class
 com\xyc\xuapicommon\model\entity\InterfaceInfo.class
+com\xyc\xuapicommon\model\vo\UserVO.class
+com\xyc\xuapicommon\model\enums\PostReviewStatusEnum.class
+com\xyc\xuapicommon\service\InnerInterfaceInfoService.class
