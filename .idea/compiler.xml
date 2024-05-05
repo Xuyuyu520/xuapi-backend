@@ -9,6 +9,7 @@
         <module name="xuapi-client-sdk" />
         <module name="xuapi-gateway" />
         <module name="xuapi-interface" />
+        <module name="xuapi-common" />
         <module name="xuapi-backend" />
       </profile>
     </annotationProcessing>
@@ -17,6 +18,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="xuapi-backend" options="-parameters" />
       <module name="xuapi-client-sdk" options="-parameters" />
+      <module name="xuapi-common" options="-parameters" />
       <module name="xuapi-gateway" options="-parameters" />
       <module name="xuapi-interface" options="-parameters" />
     </option>
